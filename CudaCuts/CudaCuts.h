@@ -106,7 +106,7 @@ public:
 	* of size width * height * numOfLabels                **
 	* *****************************************************/
 
-	int cudaCutsSetupDataTerm(int *);
+	int cudaCutsSetupDataTerm();
 
 	/*************************************************************
 	* This function copies the smoothnessTerm from the host to  **
@@ -114,7 +114,7 @@ public:
 	* of size numOfLabels * numOfLabels                         **
 	* ***********************************************************/
 
-	int cudaCutsSetupSmoothTerm(int *);
+	int cudaCutsSetupSmoothTerm();
 
 	/*************************************************************
 	* As in our case, when the graph is grid, horizotal and    **
@@ -122,8 +122,8 @@ public:
 	* of size width * height stores these respectively.        **
 	* ***********************************************************/
 
-	int cudaCutsSetupHCue(int *);
-	int cudaCutsSetupVCue(int *);
+	int cudaCutsSetupHCue();
+	int cudaCutsSetupVCue();
 
 	/*********************************************************
 	* This function constructs the graph on the device.    **
@@ -187,7 +187,6 @@ public:
 	* Emergu parameters stored                     **
 	* **********************************************/
 
-	int *hcue, *vcue, *datacost, *smoothnesscost;
 	int *dataTerm, *smoothTerm, *hCue, *vCue;
 	int *dDataTerm, *dSmoothTerm, *dHcue, *dVcue, *dPixelLabel;
 

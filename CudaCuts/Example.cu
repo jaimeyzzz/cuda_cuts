@@ -45,8 +45,7 @@ int main()
 		printf("Error: Please check the device present on the system\n");
 	}
 
-
-	int dataCheck = cuts.cudaCutsSetupDataTerm(cuts.dataTerm);
+	int dataCheck = cuts.cudaCutsSetupDataTerm();
 
 	if (dataCheck == 0)
 	{
@@ -60,7 +59,7 @@ int main()
 	}
 
 
-	int smoothCheck = cuts.cudaCutsSetupSmoothTerm(cuts.smoothTerm);
+	int smoothCheck = cuts.cudaCutsSetupSmoothTerm();
 
 
 	if (smoothCheck == 0)
@@ -74,7 +73,7 @@ int main()
 	}
 
 
-	int hcueCheck = cuts.cudaCutsSetupHCue(cuts.hCue);
+	int hcueCheck = cuts.cudaCutsSetupHCue();
 
 	if (hcueCheck == 0)
 	{
@@ -86,7 +85,7 @@ int main()
 		printf("Error: Please check the device present on the system\n");
 	}
 
-	int vcueCheck = cuts.cudaCutsSetupVCue(cuts.vCue);
+	int vcueCheck = cuts.cudaCutsSetupVCue();
 
 
 	if (vcueCheck == 0)
@@ -121,7 +120,6 @@ int main()
 		optimizeCheck = cuts.cudaCutsStochasticOptimize();
 	}
 
-
 	if (optimizeCheck == 0)
 	{
 		printf("The algorithm successfully converged\n");
@@ -147,7 +145,7 @@ int main()
 	writePGM("result_sponge/flower_cuda_test.pgm");
 
 	cuts.cudaCutsFreeMem();
-	exit(0);
+	//exit(0);
 	}
 	system("pause");
 	return 0;
@@ -215,7 +213,8 @@ void loadFile(char *filename)
 	for (i = 0; i < width * height; i++)
 		fscanf(fp, "%d", &gt);
 
-	dataCostArray = new int[width * height * nLabels];
+	dataCostArray = (int*)malloc(sizeof(int)* width * height * nLabels);
+
 	for (int c = 0; c < nLabels; c++) {
 		n = c;
 		for (i = 0; i < width * height; i++) {
@@ -224,8 +223,8 @@ void loadFile(char *filename)
 		}
 	}
 
-	hCue = new int[width * height];
-	vCue = new int[width * height];
+	hCue = (int*)malloc(sizeof(int)* width * height);
+	vCue = (int*)malloc(sizeof(int)* width * height);
 
 	n = 0;
 	for (y = 0; y < height; y++) {
@@ -246,7 +245,7 @@ void loadFile(char *filename)
 	}
 
 	fclose(fp);
-	smoothCostArray = new int[nLabels * nLabels];
+	smoothCostArray = (int*)malloc(sizeof(int)*nLabels * nLabels);
 
 	smoothCostArray[0] = 0;
 	smoothCostArray[1] = 1;

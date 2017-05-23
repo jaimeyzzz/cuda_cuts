@@ -175,11 +175,6 @@ void CudaCuts::d_mem_init()
 	CUDA_SAFE_CALL(cudaMemcpy(d_push_reser, h_reset_mem, sizeof(int)* graph_size1, cudaMemcpyHostToDevice));
 	CUDA_SAFE_CALL(cudaMemcpy(d_sink_weight, h_reset_mem, sizeof(int)* graph_size1, cudaMemcpyHostToDevice));
 
-	CUDA_SAFE_CALL(cudaMalloc((void**)&d_pull_left, sizeof(int)* graph_size1));
-	CUDA_SAFE_CALL(cudaMalloc((void**)&d_pull_right, sizeof(int)* graph_size1));
-	CUDA_SAFE_CALL(cudaMalloc((void**)&d_pull_down, sizeof(int)* graph_size1));
-	CUDA_SAFE_CALL(cudaMalloc((void**)&d_pull_up, sizeof(int)* graph_size1));
-
 	h_relabel_mask = (int*)malloc(sizeof(int)*width1*height1);
 
 	h_stochastic = (int *)malloc(sizeof(int)* num_of_blocks);
@@ -217,83 +212,54 @@ void CudaCuts::d_mem_init()
 }
 
 
-int CudaCuts::cudaCutsSetupDataTerm(int *dataTerm)
+int CudaCuts::cudaCutsSetupDataTerm()
 {
 	if (deviceCheck < 1)
 		return -1;
-
-	datacost = (int*)malloc(sizeof(int)* width *height * num_Labels);
 
 	CUDA_SAFE_CALL(cudaMalloc((void **)&dDataTerm, sizeof(int)* width * height * num_Labels));
 
 	CUDA_SAFE_CALL(cudaMemcpy(dDataTerm, dataTerm, sizeof(int)* width * height * num_Labels, cudaMemcpyHostToDevice));
 
-	for (int i = 0; i < width * height * num_Labels; i++)
-	{
-		datacost[i] = dataTerm[i];
-	}
-
 	return 0;
 }
 
 
-int CudaCuts::cudaCutsSetupSmoothTerm(int *smoothTerm)
+int CudaCuts::cudaCutsSetupSmoothTerm()
 {
 	if (deviceCheck < 1)
 		return -1;
-
-
-	smoothnesscost = (int*)malloc(sizeof(int)* num_Labels * num_Labels);
 
 	CUDA_SAFE_CALL(cudaMalloc((void **)&dSmoothTerm, sizeof(int)* num_Labels * num_Labels));
 
 	CUDA_SAFE_CALL(cudaMemcpy(dSmoothTerm, smoothTerm, sizeof(int)* num_Labels * num_Labels, cudaMemcpyHostToDevice));
 
-	for (int i = 0; i < num_Labels * num_Labels; i++)
-	{
-		smoothnesscost[i] = smoothTerm[i];
-	}
-
 	return 0;
 }
 
-int CudaCuts::cudaCutsSetupHCue(int *hCue)
+int CudaCuts::cudaCutsSetupHCue()
 {
 
 	if (deviceCheck < 1)
 		return -1;
 
-	hcue = (int*)malloc(sizeof(int)* width * height);
-
 	CUDA_SAFE_CALL(cudaMalloc((void **)&dHcue, sizeof(int)* width * height));
 
 	CUDA_SAFE_CALL(cudaMemcpy(dHcue, hCue, sizeof(int)* width * height, cudaMemcpyHostToDevice));
-
-	for (int i = 0; i < width * height; i++)
-	{
-		hcue[i] = hCue[i];
-	}
 
 	cueValues = 1;
 
 	return 0;
 }
 
-int CudaCuts::cudaCutsSetupVCue(int *vCue)
+int CudaCuts::cudaCutsSetupVCue()
 {
 	if (deviceCheck < 1)
 		return -1;
 
-	vcue = (int*)malloc(sizeof(int)* width * height);
-
 	CUDA_SAFE_CALL(cudaMalloc((void **)&dVcue, sizeof(int)* width * height));
 
 	CUDA_SAFE_CALL(cudaMemcpy(dVcue, vCue, sizeof(int)* width * height, cudaMemcpyHostToDevice));
-
-	for (int i = 0; i < width * height; i++)
-	{
-		vcue[i] = vCue[i];
-	}
 
 	return 0;
 }
@@ -354,7 +320,12 @@ int CudaCuts::cudaCutsSetupGraph()
 		temp_terminal_weight, d_pull_left, d_pull_right, d_pull_down, d_pull_up, d_relabel_mask,
 		d_graph_heightr, d_graph_heightw, width, height, graph_size, width1, height1, graph_size1);
 
-
+	CUDA_SAFE_CALL(cudaFree(temp_left_weight));
+	CUDA_SAFE_CALL(cudaFree(temp_right_weight));
+	CUDA_SAFE_CALL(cudaFree(temp_up_weight));
+	CUDA_SAFE_CALL(cudaFree(temp_down_weight));
+	CUDA_SAFE_CALL(cudaFree(temp_source_weight));
+	CUDA_SAFE_CALL(cudaFree(temp_terminal_weight));
 	return 0;
 }
 
@@ -783,4 +754,24 @@ void CudaCuts::cudaCutsFreeMem()
 
 	CUDA_SAFE_CALL(cudaFree(d_graph_heightr));
 	CUDA_SAFE_CALL(cudaFree(d_graph_heightw));
+
+	CUDA_SAFE_CALL(cudaFree(s_left_weight));
+	CUDA_SAFE_CALL(cudaFree(s_right_weight));
+	CUDA_SAFE_CALL(cudaFree(s_down_weight));
+	CUDA_SAFE_CALL(cudaFree(s_up_weight));
+	CUDA_SAFE_CALL(cudaFree(s_push_reser));
+	CUDA_SAFE_CALL(cudaFree(s_sink_weight));
+	
+	
+	CUDA_SAFE_CALL(cudaFree(d_stochastic));
+	CUDA_SAFE_CALL(cudaFree(d_stochastic_pixel));
+	CUDA_SAFE_CALL(cudaFree(d_terminate));
+	
+	CUDA_SAFE_CALL(cudaFree(d_relabel_mask));
+	
+	CUDA_SAFE_CALL(cudaFree(d_pixel_mask));
+	CUDA_SAFE_CALL(cudaFree(d_over));
+	CUDA_SAFE_CALL(cudaFree(d_counter));
+	
+	CUDA_SAFE_CALL(cudaFree(dPixelLabel));
 }
