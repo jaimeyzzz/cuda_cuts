@@ -16,9 +16,6 @@
 * Created By Vibhav Vineet.                                                                **
 ********************************************************************************************/
 
-#ifndef _CUDACUTS_CU_
-#define _CUDACUTS_CU_
-
 #include "CudaCuts.h"
 
 /********************************************************************
@@ -215,6 +212,8 @@ void CudaCuts::d_mem_init()
 
 
 	CUDA_SAFE_CALL(cudaMemcpy(dPixelLabel, dpixlab, sizeof(int)* width1 * height1, cudaMemcpyHostToDevice));
+
+	free(dpixlab);
 }
 
 
@@ -359,7 +358,6 @@ int CudaCuts::cudaCutsSetupGraph()
 	return 0;
 }
 
-
 int CudaCuts::cudaCutsAtomicOptimize()
 {
 	if (deviceCheck < 1)
@@ -374,8 +372,6 @@ int CudaCuts::cudaCutsAtomicOptimize()
 	return 0;
 
 }
-
-
 
 int CudaCuts::cudaCutsStochasticOptimize()
 {
@@ -757,63 +753,21 @@ int CudaCuts::cudaCutsGetResult()
 
 }
 
-int CudaCuts::cudaCutsGetEnergy()
-{
-	return data_energy() + smooth_energy();
-}
-
-int CudaCuts::data_energy()
-{
-	int eng = 0;
-
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-
-			eng += datacost(i*width + j, pixelLabel[i*width1 + j]);
-		}
-	}
-
-	printf("DATA ENERGY: %d\n", eng);
-	return(eng);
-}
-
-int CudaCuts::smooth_energy()
-{
-	int eng = 0;
-
-	int x, y;
-
-
-	for (y = 0; y < height; y++)
-	for (x = 1; x < width; x++)
-	{
-		if (cueValues == 1)
-			eng = eng + smoothnesscost(pixelLabel[y*width1 + x], pixelLabel[y*width1 + x - 1])*hcue[y*width + x - 1];
-		else
-			eng = eng + smoothnesscost(pixelLabel[y*width1 + x], pixelLabel[y*width1 + x - 1]);
-
-	}
-
-	for (y = 1; y < height1; y++)
-	for (x = 0; x < width1; x++)
-	{
-		if (cueValues == 1)
-			eng = eng + smoothnesscost(pixelLabel[y*width1 + x], pixelLabel[y*width1 + x - width1])*vcue[y*width + x - width];
-		else
-			eng = eng + smoothnesscost(pixelLabel[y*width1 + x], pixelLabel[y*width1 + x - width1]);
-
-	}
-	printf("SMOOTHNESS ENERGY: %d\n", eng);
-	return(eng);
-}
-
-
 void CudaCuts::cudaCutsFreeMem()
 {
 	free(h_reset_mem);
 	free(h_graph_height);
+	free(pixelLabel);
+	free(h_pixel_mask);
+	
+	free(h_relabel_mask);
+	free(h_stochastic);
+	free(h_stochastic_pixel);
+	
+	free(hCue);
+	free(vCue);
+	free(dataTerm);
+	free(smoothTerm);
 
 	CUDA_SAFE_CALL(cudaFree(d_left_weight));
 	CUDA_SAFE_CALL(cudaFree(d_right_weight));
@@ -830,6 +784,3 @@ void CudaCuts::cudaCutsFreeMem()
 	CUDA_SAFE_CALL(cudaFree(d_graph_heightr));
 	CUDA_SAFE_CALL(cudaFree(d_graph_heightw));
 }
-
-#endif
-

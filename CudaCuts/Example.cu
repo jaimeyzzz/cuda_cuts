@@ -17,16 +17,19 @@
 ********************************************************************************************/
 
 #include "CudaCuts.h"
-#include "Example.h"
 
 using namespace std;
 
 CudaCuts cuts;
 
+void loadFile(char *filename);
+void writePGM(char *filename);
+
 int main()
 {
+	while (1) {
 
-	load_files("data/sponge.txt");
+	loadFile("data/person.txt");
 
 	int initCheck = cuts.cudaCutsInit(cuts.width, cuts.height, cuts.num_Labels);
 
@@ -141,27 +144,18 @@ int main()
 		printf("Error: Please check the device present on the system\n");
 	}
 
-	//int energy = cuts.cudaCutsGetEnergy();
-
-
-	initFinalImage();
+	writePGM("result_sponge/flower_cuda_test.pgm");
 
 	cuts.cudaCutsFreeMem();
-
+	exit(0);
+	}
 	system("pause");
 	return 0;
 }
 
-
-void load_files(char *filename)
+void writePGM(char* filename)
 {
-	LoadDataFile(filename, cuts.width, cuts.height, cuts.num_Labels, cuts.dataTerm, cuts.smoothTerm, cuts.hCue, cuts.vCue);
-
-}
-
-void initFinalImage()
-{
-	out_pixel_values = (int**)malloc(sizeof(int*)*cuts.height);
+	int** out_pixel_values = (int**)malloc(sizeof(int*)*cuts.height);
 
 	for (int i = 0; i < cuts.height; i++)
 	{
@@ -170,13 +164,6 @@ void initFinalImage()
 			out_pixel_values[i][j] = 0;
 		}
 	}
-
-	writeImage();
-}
-
-void writeImage()
-{
-
 	for (int i = 0; i < cuts.graph_size1; i++)
 	{
 
@@ -185,14 +172,7 @@ void writeImage()
 		if (row >= 0 && col >= 0 && row <= cuts.height - 1 && col <= cuts.width - 1)
 			out_pixel_values[row][col] = cuts.pixelLabel[i] * 255;
 	}
-
-	write_image();
-}
-
-void write_image()
-{
-
-	FILE* fp = fopen("result_sponge/flower_cuda_test.pgm", "w");
+	FILE* fp = fopen(filename, "w");
 
 	fprintf(fp, "%c", 'P');
 	fprintf(fp, "%c", '2');
@@ -208,21 +188,25 @@ void write_image()
 		}
 	}
 	fclose(fp);
+	for (int i = 0; i < cuts.height; i++)
+		free(out_pixel_values[i]);
+	free(out_pixel_values);
 }
 
 
-
-void LoadDataFile(char *filename, int &width, int &height, int &nLabels,
-	int *&dataCostArray,
-	int *&smoothCostArray,
-	int *&hCue,
-	int *&vCue)
+void loadFile(char *filename)
 {
 	printf("enterd\n");
+	int &width = cuts.width;
+	int &height = cuts.height;
+	int &nLabels = cuts.num_Labels;
+	
+	int *&dataCostArray = cuts.dataTerm;
+	int *&smoothCostArray = cuts.smoothTerm;
+	int *&hCue = cuts.hCue;
+	int *&vCue = cuts.vCue;
 
 	FILE *fp = fopen(filename, "r");
-
-
 
 	fscanf(fp, "%d %d %d", &width, &height, &nLabels);
 

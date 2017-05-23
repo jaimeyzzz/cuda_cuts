@@ -169,15 +169,6 @@ public:
 
 	void cudaCutsFreeMem();
 
-	/***********************************************************
-	* These functions calculates the total energy of the     **
-	* configuration                                          **
-	* ********************************************************/
-
-	int cudaCutsGetEnergy();
-	int data_energy();
-	int smooth_energy();
-
 	////////////////////////////////////////////////////////////
 	//Global Variables declared                               //
 	////////////////////////////////////////////////////////////

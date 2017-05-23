@@ -17,9 +17,6 @@
 * * Created By Vibhav Vineet.                                                                **
 * ********************************************************************************************/
 
-#ifndef _PUSHRELABEL_KERNEL_CU_
-#define _PUSHRELABEL_KERNEL_CU_
-
 #include "CudaCuts.h"
 
 /************************************************
@@ -1555,4 +1552,3 @@ int *d_graph_heightr, int *d_graph_heightw, int width, int height, int graph_siz
 
 	}
 }
-#endif
