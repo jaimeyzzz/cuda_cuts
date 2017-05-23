@@ -1446,7 +1446,6 @@ int *dHcue, int *dVcue, int width, int height, int num_labels)
 				if (dPixelLabel[nPix] == alpha_label)
 				{
 					add_term1(i,
-
 						(dSmoothTerm[alpha_label + alpha_label * num_labels]) * weight,
 						(dSmoothTerm[dPixelLabel[i] + alpha_label*num_labels]) * weight,
 						d_push_reser, d_sink_weight);
@@ -1549,6 +1548,5 @@ int *d_graph_heightr, int *d_graph_heightw, int width, int height, int graph_siz
 		d_relabel_mask[thid] = 0;
 		d_graph_heightr[thid] = 1;
 		d_graph_heightw[thid] = 1;
-
 	}
 }

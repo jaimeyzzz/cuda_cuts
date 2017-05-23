@@ -27,9 +27,7 @@ void writePGM(char *filename);
 
 int main()
 {
-	while (1) {
-
-	loadFile("data/person.txt");
+	loadFile("data/sponge.txt");
 
 	int initCheck = cuts.cudaCutsInit(cuts.width, cuts.height, cuts.num_Labels);
 
@@ -145,8 +143,7 @@ int main()
 	writePGM("result_sponge/flower_cuda_test.pgm");
 
 	cuts.cudaCutsFreeMem();
-	//exit(0);
-	}
+
 	system("pause");
 	return 0;
 }
@@ -246,7 +243,6 @@ void loadFile(char *filename)
 
 	fclose(fp);
 	smoothCostArray = (int*)malloc(sizeof(int)*nLabels * nLabels);
-
 	smoothCostArray[0] = 0;
 	smoothCostArray[1] = 1;
 	smoothCostArray[2] = 1;
