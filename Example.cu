@@ -27,7 +27,7 @@ void writePGM(char *filename);
 
 int main()
 {
-	loadFile("data/sponge.txt");
+	loadFile("data/person.txt");
 
 	int initCheck = cuts.cudaCutsInit(cuts.width, cuts.height, cuts.num_Labels);
 
@@ -144,7 +144,6 @@ int main()
 
 	cuts.cudaCutsFreeMem();
 
-	system("pause");
 	return 0;
 }
 

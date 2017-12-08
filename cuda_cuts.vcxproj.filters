@@ -15,15 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Example.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
-    <CudaCompile Include="CudaCuts_kernel.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
-    <CudaCompile Include="CudaCuts.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
+    <CudaCompile Include="CudaCuts.cu" />
+    <CudaCompile Include="CudaCuts_kernel.cu" />
+    <CudaCompile Include="Example.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CudaCuts.h">
